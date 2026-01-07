@@ -1,6 +1,6 @@
 # Dagster arm-based image for k8s
 
-Dagster only builds docker images for `linux/amd64`, which cannot run on arm. This repo contains a dockerfile derived from their image such that it can be used in a helm deployment to k8s on arm machines.
+Dagster only builds docker images for `linux/amd64`, which cannot run on arm. This repo contains a dockerfile derived from the official image such that it can be used in a helm deployment to k8s on arm machines, and has some small optimizations to reduce the image size. Note that some cloud-specific dagster packages are also omitted (AWS, Azure, GCP) to reduce image size.
 
 > [!WARNING]
 > Do not use containers from this registry in production systems.

@@ -1,0 +1,45 @@
+name: Build container on version tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      dagster_version:
+        description: "Dagster tag to build (format: x.x.x)"
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          platforms: linux/arm64
+          build-args: |
+            DAGSTER_VERSION=${{ inputs.dagster_version }}
+          tags: |
+            ghcr.io/${{ github.repository }}:${{ inputs.dagster_version }}
+            ghcr.io/${{ github.repository }}:latest
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
+          cache-to: type=inline

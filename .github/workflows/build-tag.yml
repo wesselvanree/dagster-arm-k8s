@@ -1,4 +1,4 @@
-name: Build container on version tag
+name: Build image for dagster tag
 
 on:
   workflow_dispatch:
